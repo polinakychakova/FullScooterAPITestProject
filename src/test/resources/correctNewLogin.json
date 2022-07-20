@@ -1,0 +1,28 @@
+{
+  "fullCorrect": {
+    "login": "polina_liga_test",
+    "password": "123456",
+    "firstName": "FullSuccess"
+  },
+  "notFullCorrect":
+  {
+    "login": "polina_liga_without_name",
+    "password": "123456"
+  },
+  "incorrectNoLogin":
+  {
+    "password": "123456",
+    "firstName": "FullSuccess"
+  },
+  "incorrectNoPassword":
+  {
+    "login": "polina_liga_without_name",
+    "firstName": "FullSuccess"
+  },
+  "incorrectExisted":
+  {
+    "login": "polina_login1",
+    "password": "ВилкинИложкин_202277",
+    "firstName": "Василий"
+  }
+}
