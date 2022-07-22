@@ -1,73 +1,59 @@
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.cucumber.messages.JSON;
-import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
+import io.restassured.response.ValidatableResponse;
 import jdk.jfr.Description;
 import io.restassured.response.Response;
+import model.CourierLogin;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.util.List;
-
-import static net.serenitybdd.rest.RestRequests.given;
-import static org.hamcrest.CoreMatchers.equalTo;
-
+import static org.apache.http.HttpStatus.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import client.CourierAPI;
+import model.Courier;
 public class CourierCreateTest {
 
+    private CourierAPI courierAPI;
+    private Courier courier;
     @Before
     public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
+        courierAPI = new CourierAPI();
+        courier = new Courier("polina_login12", "ВилкинИложкин_202277", "Василий");
     }
+
 
 
     @DisplayName("Create new courier. Successful try.")
     @Description("Корректное создание курьера с ранее несуществовавшим логином. В конце теста новый аккаунт курьера удален")
     @Test
-    public void CreateNewCourierTest() {
-        Courier courier = new Courier("polina_liga_test", "123456", "FullSuccess");
-        Response response = CreateNewCourier(courier);
-//        System.out.println("Прошло создание нового курьера");
-        CheckAns(response, 200);
-        deleteNewCourier(getIdCourier(courier));
+    public void CreateNewCourierTest()  {
+        ValidatableResponse response = (ValidatableResponse) courierAPI.create(courier);
+        assertEquals(201, response.extract().statusCode()); // проверка статуса
+        assertEquals(response.extract().path("ok"), true); // проверка выведенного сообщения
+    }
+
+    @DisplayName("Create 2 couriers with identical parameters.")
+    @Description("Попытка создания курьера с уже существующим логином. Создается тестовый аккаунт курьера, потом создается 2 экземпляр. Получаем сообщение об ошибке создания 2 курьера и удаление 1.")
+    @Test
+    public void CreateTwoSameCourierTest()  {
+        ValidatableResponse response = (ValidatableResponse) courierAPI.create(courier); // создание 1 курьера
+//        assertEquals(201, response.extract().statusCode()); // проверка статуса Об успешном создании нового аккаунта
+//        assertEquals(response.extract().path("ok"), true); // проверка выведенного сообщения
+        ValidatableResponse FailResponse = (ValidatableResponse) courierAPI.create(new Courier("polina_login12", "ВилкинИложкин_202277", "Василий"));
+        assertEquals(409, FailResponse.extract().statusCode()); // проверка статуса Об ошибке при создании дублирующего аккаунта
     }
 
 
-    @Step("Создание нового курьера")
-    public Response CreateNewCourier(Courier courier){
-        Response response = (Response) given()
-//                .header()
-                .body(courier)
-                .when()
-                .post("/api/v1/courier");
-        return response;
+    @After
+    public void tearDown() {
+        CourierLogin courierLogin = new CourierLogin(courier.getLogin(), courier.getPassword());
+        Response response = courierAPI.deleteCourier(courierAPI.getID(courierLogin).then().extract().path("id"));
+        assertThat(response.then().extract().statusCode(), equalTo(SC_OK));
     }
 
-    @Step("Проверка ответа на запрос")
-    public void CheckAns(Response response, int code){
-        response.then().assertThat().statusCode(code);
-    }
 
-    @Step("Получение id новосозданного курьера. Из процесса авторизации")
-    public int getIdCourier(Courier courier){
-        int id = 0;
-        String json = "{ \"login\": "+ courier.getLogin() +", \"password\": "+courier.getPassword()+"}";
-        Response response = (Response) given()
-                .body(json)
-                .when()
-                .post("/api/v1/courier/login");
-        response.then().assertThat().statusCode(200);
-//        response.then().body("id").;
-//        return response.body(id, equalTo(95679)).asString();
-        return id;
-    }
 
-    @Step("Удаление ранее созданного аккаунта курьера")
-    public void deleteNewCourier(int id){
-        //Запрос на удаление курьера по Id
-        // проверка ответа сервера
-    }
 }
 

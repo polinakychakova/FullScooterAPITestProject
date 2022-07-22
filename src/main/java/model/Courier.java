@@ -1,3 +1,5 @@
+package model;
+
 import java.io.File;
 
 public class Courier {
@@ -13,11 +15,6 @@ public class Courier {
 
     public Courier(){}
 
-//    public Courier (File json){
-//        this.login = json.login;
-//        this.password = json.password;
-//        this.firstName = json.firstName;
-//    }
     public String getLogin() {
         return login;
     }
@@ -41,6 +38,13 @@ public class Courier {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-
+    @Override
+    public String toString() {
+        return "model.Courier{" +
+                "login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                '}';
+    }
 
 }
