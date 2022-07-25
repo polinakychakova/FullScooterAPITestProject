@@ -1,5 +1,9 @@
+package courier;
+
 import client.CourierAPI;
+import client.OrderAPI;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.response.Validatable;
 import io.restassured.response.ValidatableResponse;
@@ -22,12 +26,16 @@ public class CourierLoginTest {
 
 //    private Courier courier;
     public CourierLoginTest(String login, String password) {
-//        this.courier = new Courier(login, password, firstName);
-        this.courierAPI = new CourierAPI();
         this.courierLogin = new CourierLogin(login, password);
         if ((login == "") | (password == ""))
             expCode = 400;
         else expCode = 404;
+    }
+
+    @Before
+    public void setUp() {
+        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
+        courierAPI = new CourierAPI();
     }
 
     @Parameterized.Parameters // для передачи в
