@@ -1,3 +1,5 @@
+package courier;
+
 import client.CourierAPI;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
@@ -38,7 +40,8 @@ public class CourierFailCreateTest {
 
 
     @DisplayName("Try to create courier without login or password.")
-    @Description("Попытка создания курьера, не передав логин или пароль (параметризованный тест).")
+    @Description("Попытка создания курьера, не передав логин или пароль (параметризованный тест)." +
+            "В процессе теста новые аккаунты не создаются")
     @Test
     public void CreateCourierWithoutOneParameterTest()  {
         courier = new Courier("", "ВилкинИложкин_202277", "Василий");
