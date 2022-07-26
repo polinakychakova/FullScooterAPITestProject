@@ -1,13 +1,18 @@
-import client.OrderAPI;
+package ru.liga.praktikum.order;
+
+import ru.liga.praktikum.client.OrderAPI;
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
-import jdk.jfr.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
+import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.junit.Assert.assertEquals;
 
 
@@ -42,17 +47,16 @@ public class CreateNewOrderByJsonTest {
     @DisplayName("Create new order.")
     @Description("Параметрический тест создание заказа. Параметр используется в графе выбора цвета самоката. " +
             "Тест проверяет, что в ответе возвращается track-номер нового заказа. Заказ может быть создан без передачи какого-либо параметра." +
-            "В конце теста заказ завершаеся. так как серсвис отмены не работает")
+            "В конце теста заказ отменяется (проверяется код 400, так как сервис отмены не работает).")
     @Test
     public void NewOrderTest() {
         ValidatableResponse response= orderAPI.CreateNewOrderByFile(fileName);
-//        ValidatableResponse response= orderAPI.CreateNewOrderW(color); // передача только строки с цветом
-        assertEquals(201, response.extract().statusCode());
+        assertEquals(SC_CREATED, response.extract().statusCode()); //201
         track = response.extract().path("track"); //получение трек-номера
     }
 
     @After
     public void tearDown() {
-        assertEquals(400, orderAPI.CancelOrder(track).extract().statusCode()); // сервер не работает
+        assertEquals(SC_BAD_REQUEST, orderAPI.CancelOrder(track).extract().statusCode()); // сервер не работает 400
     }
 }

@@ -1,4 +1,4 @@
-package model;
+package ru.liga.praktikum.model;
 
 public class Order {
     public String firstName;

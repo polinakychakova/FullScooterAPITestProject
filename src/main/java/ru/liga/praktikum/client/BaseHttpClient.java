@@ -1,4 +1,4 @@
-package client;
+package ru.liga.praktikum.client;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;

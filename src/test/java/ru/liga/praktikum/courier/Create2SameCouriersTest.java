@@ -1,39 +1,29 @@
-package courier;
+package ru.liga.praktikum.courier;
 
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
-import jdk.jfr.Description;
 import io.restassured.response.Response;
-import model.CourierLogin;
+import ru.liga.praktikum.model.CourierLogin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import client.CourierAPI;
-import model.Courier;
-public class CourierCreateTest {
+import ru.liga.praktikum.client.CourierAPI;
+import ru.liga.praktikum.model.Courier;
+
+public class Create2SameCouriersTest {
 
     private CourierAPI courierAPI;
     private Courier courier;
+
     @Before
     public void setUp() {
-        courierAPI = new CourierAPI();
         courier = new Courier("polina_login12", "ВилкинИложкин_202277", "Василий");
-    }
-
-
-
-    @DisplayName("Create new courier. Successful try.")
-    @Description("Корректное создание курьера с ранее несуществовавшим логином. В конце теста новый аккаунт курьера удален")
-    @Test
-    public void CreateNewCourierTest()  {
-        ValidatableResponse response = (ValidatableResponse) courierAPI.create(courier);
-        assertEquals(201, response.extract().statusCode()); // проверка статуса
-        assertEquals(response.extract().path("ok"), true); // проверка выведенного сообщения
+        courierAPI = new CourierAPI();
     }
 
     @DisplayName("Create 2 couriers with identical parameters.")
@@ -41,21 +31,16 @@ public class CourierCreateTest {
     @Test
     public void CreateTwoSameCourierTest()  {
         ValidatableResponse response = (ValidatableResponse) courierAPI.create(courier); // создание 1 курьера
-//        assertEquals(201, response.extract().statusCode()); // проверка статуса Об успешном создании нового аккаунта
-//        assertEquals(response.extract().path("ok"), true); // проверка выведенного сообщения
+        assertEquals(SC_CREATED, response.extract().statusCode()); // проверка статуса Об успешном создании нового аккаунта
+        assertEquals(response.extract().path("ok"), true); // проверка выведенного сообщения
         ValidatableResponse FailResponse = (ValidatableResponse) courierAPI.create(new Courier("polina_login12", "ВилкинИложкин_202277", "Василий"));
-        assertEquals(409, FailResponse.extract().statusCode()); // проверка статуса Об ошибке при создании дублирующего аккаунта
+        assertEquals(SC_CONFLICT, FailResponse.extract().statusCode()); // проверка статуса Об ошибке при создании дублирующего аккаунта
     }
-
-
     @After
     public void tearDown() {
         CourierLogin courierLogin = new CourierLogin(courier.getLogin(), courier.getPassword());
         Response response = courierAPI.deleteCourier(courierAPI.getID(courierLogin).then().extract().path("id"));
-        assertThat(response.then().extract().statusCode(), equalTo(SC_OK));
+//        assertThat(response.then().extract().statusCode(), equalTo(SC_OK));
     }
-
-
-
 }
 
