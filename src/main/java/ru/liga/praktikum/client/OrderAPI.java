@@ -1,20 +1,15 @@
-package client;
-
+package ru.liga.praktikum.client;
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.PreemptiveAuthSpec;
-import model.Order;
-
+import ru.liga.praktikum.model.Order;
 import java.io.File;
 
 import static net.serenitybdd.rest.RestRequests.given;
-import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class OrderAPI extends BaseHttpClient{
     private static final String ORDERS_PATH = "/api/v1/orders";
-    private static final String FINISH_ORDER_PATH = "/api/v1/orders/finish/";
-    private static final String GET_ORDER_ID_PATH = "/api/v1/orders/track";
+//    private static final String FINISH_ORDER_PATH = "/api/v1/orders/finish/";
+//    private static final String GET_ORDER_ID_PATH = "/api/v1/orders/track";
     private static final String CANCEL_ORDER_PATH = "/api/v1/orders/cancel";
 
     @Step("Get full list of orders")
@@ -28,13 +23,9 @@ public class OrderAPI extends BaseHttpClient{
 
     @Step("Creating a new order")
     public ValidatableResponse CreateNewOrder(Order order){
-//    public ValidatableResponse CreateNewOrder(String fileName){
-//        File json = new File (fileName);
         ValidatableResponse response =   (ValidatableResponse) given()
                 .spec(baseSpec())
-//                .header("Content-type", "application/json")
                 .body(order)
-//                .log().all()
                 .when()
                 .post(ORDERS_PATH)
                 .then()
@@ -50,7 +41,7 @@ public class OrderAPI extends BaseHttpClient{
                 .spec(baseSpec())
                 .header("Content-type", "application/json")
                 .body(json)
-                .log().all()
+//                .log().all()
                 .when()
                 .post(ORDERS_PATH)
                 .then()
@@ -60,7 +51,6 @@ public class OrderAPI extends BaseHttpClient{
     }
     @Step("Creating a new order only with color")
     public ValidatableResponse CreateNewOrderW(String color){
-//        System.out.println(order);
         ValidatableResponse response =   (ValidatableResponse) given()
                 .spec(baseSpec())
                 .body(color)
@@ -105,7 +95,6 @@ public class OrderAPI extends BaseHttpClient{
                 .spec(baseSpec())
                 .body(trackStr)
                 .when()
-//                .log().all()
                 .put(CANCEL_ORDER_PATH)// отмена заказа
                 .then();
 

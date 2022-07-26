@@ -1,12 +1,10 @@
-package client;
+package ru.liga.praktikum.client;
 
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
-import model.Courier;
+import ru.liga.praktikum.model.Courier;
 import io.restassured.response.ValidatableResponse;
-import model.CourierLogin;
-
-import javax.swing.*;
+import ru.liga.praktikum.model.CourierLogin;
 
 import static net.serenitybdd.rest.RestRequests.given;
 

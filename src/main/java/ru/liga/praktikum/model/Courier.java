@@ -1,4 +1,4 @@
-package model;
+package ru.liga.praktikum.model;
 
 import java.io.File;
 
@@ -40,7 +40,7 @@ public class Courier {
     }
     @Override
     public String toString() {
-        return "model.Courier{" +
+        return "ru.liga.praktikum.model.Courier{" +
                 "login='" + login + '\'' +
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
